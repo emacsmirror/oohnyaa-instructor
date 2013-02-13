@@ -18,7 +18,7 @@
 
 ;; This program is heavily based on "drill-instructor.el" (v1.1.4) by k1LoW
 
-;; Version: 1.0.0
+;; Version: 1.0.1
 ;; Author: zk_phi
 ;; URL: http://hins11.yu-yake.com/
 
@@ -31,31 +31,32 @@
 ;;; Change Log:
 
 ;; 1.0.0 first released
+;; 1.0.1 minor fix and refactorings
 
 ;;; Code:
 
-;; constants
+;; * constants
 
-(defconst oohnyaa-version "1.0.0")
+(defconst oohnyaa-version "1.0.1")
 
 ;; prefered keys
 
-(defvar oohnyaa-left-key "C-b")
-(defvar oohnyaa-right-key "C-f")
-(defvar oohnyaa-up-key "C-p")
-(defvar oohnyaa-down-key "C-n")
+(defconst oohnyaa-left-key "C-b")
+(defconst oohnyaa-right-key "C-f")
+(defconst oohnyaa-up-key "C-p")
+(defconst oohnyaa-down-key "C-n")
 
-(defvar oohnyaa-home-key "C-a")
-(defvar oohnyaa-end-key "C-e")
-(defvar oohnyaa-prior-key "M-v")
-(defvar oohnyaa-next-key "C-v")
+(defconst oohnyaa-home-key "C-a")
+(defconst oohnyaa-end-key "C-e")
+(defconst oohnyaa-prior-key "M-v")
+(defconst oohnyaa-next-key "C-v")
 
-(defvar oohnyaa-delete-key "C-d")
-(defvar oohnyaa-backspace-key "C-h")
-(defvar oohnyaa-tab-key "C-i")
-(defvar oohnyaa-return-key "C-m")
+(defconst oohnyaa-delete-key "C-d")
+(defconst oohnyaa-backspace-key "C-h")
+(defconst oohnyaa-tab-key "C-i")
+(defconst oohnyaa-return-key "C-m")
 
-;; mode
+;; * mode variable
 
 (defvar oohnyaa-instructor nil)
 
@@ -63,12 +64,31 @@
   '(term-mode)
   "Ooh!Nyaa instructor unset list")
 
-;; setq minor-mode-alist
+(defvar oohnyaa-key-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "<up>") (lambda()(interactive)(oohnyaa-alert oohnyaa-up-key)))
+    (define-key map (kbd "<down>") (lambda()(interactive)(oohnyaa-alert oohnyaa-down-key)))
+    (define-key map (kbd "<left>") (lambda()(interactive)(oohnyaa-alert oohnyaa-left-key)))
+    (define-key map (kbd "<right>") (lambda()(interactive)(oohnyaa-alert oohnyaa-right-key)))
+
+    (define-key map (kbd "<next>") (lambda()(interactive)(oohnyaa-alert oohnyaa-next-key)))
+    (define-key map (kbd "<prior>") (lambda()(interactive)(oohnyaa-alert oohnyaa-prior-key)))
+    (define-key map (kbd "<home>") (lambda()(interactive)(oohnyaa-alert oohnyaa-home-key)))
+
+    (define-key map (kbd "<delete>") (lambda()(interactive)(oohnyaa-alert oohnyaa-delete-key)))
+    (define-key map (kbd "<backspace>") (lambda()(interactive)(oohnyaa-alert oohnyaa-backspace-key)))
+    (define-key map (kbd "<tab>") (lambda()(interactive)(oohnyaa-alert oohnyaa-tab-key)))
+    (define-key map (kbd "<return>") (lambda()(interactive)(oohnyaa-alert oohnyaa-return-key)))
+    map))
+
+(add-to-list 'minor-mode-map-alist (cons 'oohnyaa-instructor oohnyaa-key-map))
 
 (if (not (assq 'oohnyaa-instructor minor-mode-alist))
-    (setq minor-mode-alist (cons '(oohnyaa-instructor " ・ω・") minor-mode-alist)) )
+    (setq minor-mode-alist
+          (cons '(oohnyaa-instructor " ・ω・")
+                minor-mode-alist)) )
 
-;; oohnyaa instructor switch
+;; * oohnyaa instructor switch
 
 (defun oohnyaa-instructor-switch ()
   "oohnyaa-instructor-switch"
@@ -92,24 +112,7 @@
   "oohnyaa-instructor-delete-window"
   (oohnyaa-instructor-switch))
 
-;; key-map
-
-(defvar oohnyaa-key-map
-  (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "<up>") (lambda()(interactive)(oohnyaa-alert oohnyaa-up-key)))
-    (define-key map (kbd "<down>") (lambda()(interactive)(oohnyaa-alert oohnyaa-down-key)))
-    (define-key map (kbd "<left>") (lambda()(interactive)(oohnyaa-alert oohnyaa-left-key)))
-    (define-key map (kbd "<right>") (lambda()(interactive)(oohnyaa-alert oohnyaa-right-key)))
-
-    (define-key map (kbd "<next>") (lambda()(interactive)(oohnyaa-alert oohnyaa-next-key)))
-    (define-key map (kbd "<prior>") (lambda()(interactive)(oohnyaa-alert oohnyaa-prior-key)))
-    (define-key map (kbd "<home>") (lambda()(interactive)(oohnyaa-alert oohnyaa-home-key)))
-
-    (define-key map (kbd "<delete>") (lambda()(interactive)(oohnyaa-alert oohnyaa-delete-key)))
-    (define-key map (kbd "<backspace>") (lambda()(interactive)(oohnyaa-alert oohnyaa-backspace-key)))
-    (define-key map (kbd "<tab>") (lambda()(interactive)(oohnyaa-alert oohnyaa-tab-key)))
-    (define-key map (kbd "<return>") (lambda()(interactive)(oohnyaa-alert oohnyaa-return-key)))
-    map))
+;; * command
 
 (defun oohnyaa-alert (keystring)
   (interactive)
@@ -119,12 +122,11 @@
   (message (concat "(／・ω・)／  " keystring)) (sleep-for 0.5)
   (message ""))
 
-;; activate
+;; * activate
 
 (setq oohnyaa-instructor t)
-(add-to-list 'minor-mode-map-alist (cons 'oohnyaa-instructor oohnyaa-key-map))
 
-;; mode provide
+;; * provide
 
 (provide 'oohnyaa-instructor)
 
